@@ -28,6 +28,16 @@
  * Check permissions for extended attribute access.  This is a bit complicated
  * because different namespaces have very different rules.
  */
+
+/**
+ *  对扩展属性的访问进行权限检查，判断用户是否可以对指定文件进行指定操作
+ *
+ *  @param inode 存储扩展属性的数据结构
+ *  @param name  属性名
+ *  @param mask  操作类型
+ *
+ *  @return 返回是否具有权限
+ */
 static int
 xattr_permission(struct inode *inode, const char *name, int mask)
 {
@@ -89,6 +99,17 @@ xattr_permission(struct inode *inode, const char *name, int mask)
  *  is executed. It also assumes that the caller will make the appropriate
  *  permission checks.
  */
+/**
+ *  用于在不进行权限检查的情况下执行setxattr操作
+ *
+ *  @param dentry 指向目标对象对应的目录项
+ *  @param name   待操作的扩展属性名
+ *  @param value  待设置的扩展属性值
+ *  @param size   扩展属性值的长度
+ *  @param flags  相应的操作标志
+ *
+ *  @return 成功返回0，失败返回相应的错误码
+ */
 int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
 		const void *value, size_t size, int flags)
 {
@@ -117,7 +138,17 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
 	return error;
 }
 
-
+/**
+ *  用来实现扩展属性的相关具体操作
+ *
+ *  @param dentry 指向目标对象对应的目录项
+ *  @param name   待操作的扩展属性名
+ *  @param value  待设置的扩展属性值
+ *  @param size   扩展属性值的长度
+ *  @param flags  相应的操作标志
+ *
+ *  @return 成功返回0，失败返回相应的错误码
+ */
 int
 vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
 		size_t size, int flags)
@@ -142,6 +173,16 @@ out:
 }
 EXPORT_SYMBOL_GPL(vfs_setxattr);
 
+/**
+ *  <#Description#>
+ *
+ *  @param inode <#inode description#>
+ *  @param name  <#name description#>
+ *  @param value <#value description#>
+ *  @param size  <#size description#>
+ *
+ *  @return <#return value description#>
+ */
 ssize_t
 xattr_getsecurity(struct inode *inode, const char *name, void *value,
 			size_t size)
@@ -177,6 +218,18 @@ EXPORT_SYMBOL_GPL(xattr_getsecurity);
  *
  * Returns the result of alloc, if failed, or the getxattr operation.
  */
+
+/**
+ *  在调用getxattr函数之前进行必要的内存分配
+ *
+ *  @param dentry 指向目标对象对应的目录项
+ *  @param name   待操作的扩展属性名
+ *  @param value  待设置的扩展属性值
+ *  @param size   扩展属性值的长度
+ *  @param flags  相应的操作标志
+ *
+ *  @return 内存大小或错误
+ */
 ssize_t
 vfs_getxattr_alloc(struct dentry *dentry, const char *name, char **xattr_value,
 		   size_t xattr_size, gfp_t flags)
@@ -207,7 +260,16 @@ vfs_getxattr_alloc(struct dentry *dentry, const char *name, char **xattr_value,
 	*xattr_value = value;
 	return error;
 }
-
+/**
+ *  获取指定扩展属性的值
+ *
+ *  @param dentry 指向目标对象对应的目录项
+ *  @param name   要获取扩展属性的名字
+ *  @param value  存放扩展属性的缓冲区
+ *  @param size   存放扩展属性属性值的存储空间的长度
+ *
+ *  @return 成功时返回扩展属性值的长度，失败返回相应的错误码
+ */
 ssize_t
 vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
 {
@@ -244,6 +306,15 @@ nolsm:
 }
 EXPORT_SYMBOL_GPL(vfs_getxattr);
 
+/**
+ *  获取文件的扩展属性列表
+ *
+ *  @param d    指向目标对象的目录项
+ *  @param list 指向存放扩展属性属性值的缓冲区
+ *  @param size 缓冲区长度
+ *
+ *  @return 成功时返回扩展属性的长度，失败时返回相应的错误码
+ */
 ssize_t
 vfs_listxattr(struct dentry *d, char *list, size_t size)
 {
@@ -264,6 +335,14 @@ vfs_listxattr(struct dentry *d, char *list, size_t size)
 }
 EXPORT_SYMBOL_GPL(vfs_listxattr);
 
+/**
+ *  删除参数name指定的扩展属性
+ *
+ *  @param dentry 指向目标对象对应的目录项
+ *  @param name   待删除的扩展属性名
+ *
+ *  @return 成功时返回0，失败时返回错误码
+ */
 int
 vfs_removexattr(struct dentry *dentry, const char *name)
 {
@@ -298,6 +377,18 @@ EXPORT_SYMBOL_GPL(vfs_removexattr);
 
 /*
  * Extended attribute SET operations
+ */
+
+/**
+ *  根据参数来设置或替换某个扩展属性的值，或者创建一个新的扩展属性
+ *
+ *  @param d      指向目标对象对应的目录项
+ *  @param name   待操作的扩展属性名
+ *  @param value  待设置的扩展属性值
+ *  @param size   扩展属性值的长度
+ *  @param flags  相应的操作标志
+ *
+ *  @return 成功返回0，失败返回相应的错误码
  */
 static long
 setxattr(struct dentry *d, const char __user *name, const void __user *value,
@@ -341,6 +432,18 @@ out:
 	return error;
 }
 
+/**
+ *  <#Description#>
+ *
+ *  @param pathname     <#pathname description#>
+ *  @param name         <#name description#>
+ *  @param value        <#value description#>
+ *  @param size         <#size description#>
+ *  @param flags        <#flags description#>
+ *  @param lookup_flags <#lookup_flags description#>
+ *
+ *  @return <#return value description#>
+ */
 static int path_setxattr(const char __user *pathname,
 			 const char __user *name, const void __user *value,
 			 size_t size, int flags, unsigned int lookup_flags)
