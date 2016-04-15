@@ -15,6 +15,12 @@
 /*
  * Convert from filesystem to in-memory representation.
  */
+/**
+函数功能：读取保存在物理磁盘上的ACL，转换为内存形式的ACL
+参数：  value：ACL的首地址
+        size: ACL的大小
+返回值：指向内存形式的ACL的指针
+**/
 static struct posix_acl *
 ext2_acl_from_disk(const void *value, size_t size)
 {
@@ -87,6 +93,12 @@ fail:
 /*
  * Convert from in-memory to filesystem representation.
  */
+ /**
+函数功能：将内存形式的ACL转换为文件系统的acl结构体形式
+参数：  acl：指向内存形式的ACL的地址
+        size: 指针形式返回posix_acl的大小
+返回值：void*，指向ext2文件系统的acl结构体，或错误类型
+**/
 static void *
 ext2_acl_to_disk(const struct posix_acl *acl, size_t *size)
 {
@@ -139,6 +151,12 @@ fail:
 /*
  * inode->i_mutex: don't care
  */
+/**
+函数功能：从索引节点获取内存形式的acl，同时增加引用计数
+参数：  inode：索引节点
+        type: 标识从哪里读取，如果是ACL_TYPE_ACCESS标识从ext2_inode_info->i_acl，如果是ACL_TYPE_DEFAULT标识从ext2_inode_info->i_default_acl读取
+返回值：返回指向内存形式的ACL的指针
+**/
 struct posix_acl *
 ext2_get_acl(struct inode *inode, int type)
 {
@@ -181,6 +199,13 @@ ext2_get_acl(struct inode *inode, int type)
 /*
  * inode->i_mutex: down
  */
+/**
+函数功能：用内存形式的acl设置索引节点的acl
+参数：  inode：索引节点
+        acl: 指向内存形式的ACL
+        type: 标识设置哪一个acl
+返回值：如果错误，返回错误码
+**/
 int
 ext2_set_acl(struct inode *inode, struct posix_acl *acl, int type)
 {
@@ -234,6 +259,12 @@ ext2_set_acl(struct inode *inode, struct posix_acl *acl, int type)
  * dir->i_mutex: down
  * inode->i_mutex: up (access to inode is still exclusive)
  */
+/**
+函数功能：为一个新的inode初始化acl结构体，被ext2_new_inode调用
+参数：  inode：文件索引节点
+         dir: 目录索引节点
+返回值：如果错误，返回错误码
+**/
 int
 ext2_init_acl(struct inode *inode, struct inode *dir)
 {
